@@ -14,3 +14,5 @@ Route::apiResource('tasks', TaskController::class);
 Route::apiResource('profile', ProfileController::class);
 
 Route::get('user/{id}/profile', [UserController::class, 'getProfile']);
+Route::get('user/{id}/tasks', [UserController::class, 'getUserTasks']);
+Route::get('task/{id}/user', [TaskController::class, 'getTaskUser']);
