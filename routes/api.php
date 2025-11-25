@@ -11,8 +11,13 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::apiResource('tasks', TaskController::class);
+Route::get('task/{id}/user', [TaskController::class, 'getTaskUser']);
+
 Route::apiResource('profile', ProfileController::class);
 
 Route::get('user/{id}/profile', [UserController::class, 'getProfile']);
 Route::get('user/{id}/tasks', [UserController::class, 'getUserTasks']);
-Route::get('task/{id}/user', [TaskController::class, 'getTaskUser']);
+
+Route::post('tasks/{taskId}/categories', [TaskController::class, 'addCategoriesToTasks']);
+Route::get('tasks/{taskId}/categories', [TaskController::class, 'getTasksCategories']);
+Route::get('categories/{categoryId}/tasks', [TaskController::class, 'getCategoriesTasks']);
