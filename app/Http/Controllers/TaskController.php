@@ -70,9 +70,9 @@ class TaskController extends Controller
 
     }
 
-    public function getTasksCategories($task_id)
+    public function getTasksCategories($taskId)
     {
-        $categories = Task::firstOrFail($task_id)->categories;
+        $categories = Task::findOrFail($taskId)->categories; // fix find
 
         return response()->json($categories, 200);
 
