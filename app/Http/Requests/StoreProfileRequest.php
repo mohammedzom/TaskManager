@@ -12,7 +12,6 @@ class StoreProfileRequest extends BaseProfileRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id|unique:profiles,user_id',
             'phone' => 'nullable|string|max:50',
             'address' => 'nullable|string|max:100',
             'date_of_birth' => 'nullable|date',

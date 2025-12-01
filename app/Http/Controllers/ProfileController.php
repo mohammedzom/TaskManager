@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ProfileController extends Controller
@@ -25,7 +26,15 @@ class ProfileController extends Controller
      */
     public function store(StoreProfileRequest $request): JsonResponse
     {
-        $profile = Profile::create($request->validated());
+        $user_id = Auth::user()->id;
+        $ValidatedData = $request->validated();
+        $existingProfile = Profile::where('user_id', $user_id)->first();
+        if ($existingProfile) {
+            return response()->json([
+                'message' => 'User already has a profile. Use update instead.',
+            ], 409); // 409 Conflict
+        }
+        $profile = Auth::user()->profile()->create($request->validated());
 
         return response()->json([
             'message' => 'Profile created successfully',
@@ -49,8 +58,7 @@ class ProfileController extends Controller
      */
     public function update(UpdateProfileRequest $request, string $id)
     {
-        $profile = Profile::where('user_id', $id)->firstOrFail();
-        $profile->update($request->validated());
+        $profile = Auth::user()->profile()->update($request->validated());
 
         return response()->json($profile, 200);
 
