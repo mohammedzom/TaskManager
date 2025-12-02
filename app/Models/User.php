@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Task::class);
     }
+
+    public function favoriteTasks()
+    {
+        return $this->belongsToMany(Task::class, 'favorites');
+    }
 }

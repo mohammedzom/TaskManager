@@ -14,7 +14,7 @@ class StoreTaskRequest extends BaseTaskRequest
         return [
             'title' => 'required|string|max:50',
             'description' => 'nullable|string',
-            'priority' => 'required|integer|min:1|max:5',
+            'priority' => 'required|in:high,medium,low',
         ];
     }
 }

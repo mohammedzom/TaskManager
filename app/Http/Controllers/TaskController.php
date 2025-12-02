@@ -26,6 +26,26 @@ class TaskController extends Controller
         return response()->json($tasks, 200);
     }
 
+    public function getTaskOrderByPriority()
+    {
+        $tasks = Auth::user()->tasks()->orderByRaw('FIELD(priority, "high", "medium", "low")')->get();
+
+        return response()->json($tasks, 200);
+    }
+
+    public function getTaskOrderByPriorityByUser($sort_direction)
+    {
+        if (strtoupper($sort_direction) === 'ASC') {
+            $tasks = Auth::user()->tasks()->orderByRaw('FIELD(priority, "low", "medium", "high")')->get();
+        } elseif (strtoupper($sort_direction) === 'DESC') {
+            $tasks = Auth::user()->tasks()->orderByRaw('FIELD(priority, "high", "medium", "low")')->get();
+        } else {
+            return response()->json(['message' => 'Invalid Sort Direction'], 422);
+        }
+
+        return response()->json($tasks, 200);
+    }
+
     public function store(StoreTaskRequest $request)
     {
         $task = Auth::user()->tasks()->create($request->validated());
@@ -85,5 +105,32 @@ class TaskController extends Controller
 
         return response()->json($categories, 200);
 
+    }
+
+    public function addToFavorites($taskId)
+    {
+        if (Task::findOrFail($taskId)->user_id != Auth::user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        Auth::user()->favoriteTasks()->syncWithoutDetaching($taskId);
+
+        return response()->json(['message' => 'Task added to favorites'], 200);
+    }
+
+    public function removeFromFavorites($taskId)
+    {
+        if (Task::findOrFail($taskId)->user_id != Auth::user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        Auth::user()->favoriteTasks()->detach($taskId);
+
+        return response()->json(['message' => 'Task removed from favorites'], 200);
+    }
+
+    public function getFavoriteTasks()
+    {
+        $favorites = Auth::user()->favoriteTasks;
+
+        return response()->json($favorites, 200);
     }
 }
