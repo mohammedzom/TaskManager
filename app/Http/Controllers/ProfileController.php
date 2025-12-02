@@ -15,7 +15,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $profile = Profile::all();
+        $profile = Auth::user()->profile();
 
         return response()->json($profile, 200);
 
@@ -27,7 +27,6 @@ class ProfileController extends Controller
     public function store(StoreProfileRequest $request): JsonResponse
     {
         $user_id = Auth::user()->id;
-        $ValidatedData = $request->validated();
         $existingProfile = Profile::where('user_id', $user_id)->first();
         if ($existingProfile) {
             return response()->json([
@@ -47,7 +46,7 @@ class ProfileController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $profile = Profile::where('user_id', $id)->firstOrFail();
+        $profile = Auth::user()->profile()->firstOrFail();
 
         return response()->json($profile, 200);
 
@@ -56,7 +55,7 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProfileRequest $request, string $id)
+    public function update(UpdateProfileRequest $request)
     {
         $profile = Auth::user()->profile()->update($request->validated());
 
@@ -69,8 +68,7 @@ class ProfileController extends Controller
      */
     public function destroy(string $id)
     {
-        $profile = Profile::findOrFail($id);
-        $profile->delete();
+        $profile = Auth::user()->profile()->findOrFail($id)->delete();
 
         return response()->json(null, 204);
     }
