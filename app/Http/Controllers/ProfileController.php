@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Profile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ProfileController extends Controller
@@ -33,7 +34,12 @@ class ProfileController extends Controller
                 'message' => 'User already has a profile. Use update instead.',
             ], 409); // 409 Conflict
         }
-        $profile = Auth::user()->profile()->create($request->validated());
+        $validated = $request->validated();
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $validated['image'] = $path;
+        }
+        $profile = Auth::user()->profile()->create($validated);
 
         return response()->json([
             'message' => 'Profile created successfully',
@@ -50,7 +56,12 @@ class ProfileController extends Controller
         if (! $profile) {
             return response()->json(['message' => 'Profile not found'], 404);
         }
-        $profile->update($request->validated());
+        $validated = $request->validated();
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $validated['image'] = $path;
+        }
+        $profile->update($validated);
 
         return response()->json($profile, 200);
 
@@ -65,6 +76,7 @@ class ProfileController extends Controller
         if (! $profile) {
             return response()->json(['message' => 'Profile not found'], 404);
         }
+        Storage::disk('public')->delete($profile->image);
         $profile->delete();
 
         return response()->json(null, 204);

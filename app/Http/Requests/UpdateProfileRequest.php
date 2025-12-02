@@ -16,6 +16,8 @@ class UpdateProfileRequest extends BaseProfileRequest
             'address' => 'sometimes|nullable|string|max:100',
             'date_of_birth' => 'sometimes|nullable|date',
             'bio' => 'sometimes|nullable|string',
+            'image' => 'sometimes|image|mimes:png,jpg,jpeg,gif|max:2048',
+
         ];
     }
 }
