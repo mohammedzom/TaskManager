@@ -15,10 +15,12 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|max:32|confirmed',
+            'role' => 'nullable|string',
         ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => $request->role ?? 'user',
             'password' => Hash::make($request->password),
         ]);
 

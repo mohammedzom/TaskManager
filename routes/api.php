@@ -27,6 +27,8 @@ Route::middleware('auth:sanctum')->group(
         Route::get('user/{id}/tasks', [UserController::class, 'getUserTasks']);
 
         Route::apiResource('tasks', TaskController::class);
+        Route::get('task/all', [TaskController::class, 'getAllTasks'])->middleware('CheckUser');
+
         Route::get('task/{id}/user', [TaskController::class, 'getTaskUser']);
         Route::post('tasks/{taskId}/categories', [TaskController::class, 'addCategoriesToTasks']);
         Route::get('tasks/{taskId}/categories', [TaskController::class, 'getTasksCategories']);
