@@ -59,12 +59,12 @@ class TaskController extends Controller
         $task = Auth::user()->tasks()->findOrFail($taskId);
         $task->categories()->syncWithoutDetaching($request->category_id);
 
-        return response()->json('Category attached successfuly', 200);
+        return response()->json('Category attached successfully', 200);
     }
 
     public function getCategoriesTasks($category_id)
     {
-        $tasks = Category::findOrFail($category_id)->tasks;
+        $tasks = Category::findOrFail($category_id)->tasks()->where('user_id', Auth::id())->get();
 
         return response()->json($tasks, 200);
 

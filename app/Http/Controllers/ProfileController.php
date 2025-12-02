@@ -15,7 +15,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $profile = Auth::user()->profile();
+        $profile = Auth::user()->profile;
 
         return response()->json($profile, 200);
 
@@ -42,22 +42,15 @@ class ProfileController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(int $id): JsonResponse
-    {
-        $profile = Auth::user()->profile()->firstOrFail();
-
-        return response()->json($profile, 200);
-
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateProfileRequest $request)
     {
-        $profile = Auth::user()->profile()->update($request->validated());
+        $profile = Auth::user()->profile;
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+        $profile->update($request->validated());
 
         return response()->json($profile, 200);
 
@@ -66,9 +59,13 @@ class ProfileController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy()
     {
-        $profile = Auth::user()->profile()->findOrFail($id)->delete();
+        $profile = Auth::user()->profile;
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+        $profile->delete();
 
         return response()->json(null, 204);
     }

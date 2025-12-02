@@ -17,7 +17,11 @@ Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanct
 Route::middleware('auth:sanctum')->group(
     function () {
 
-        Route::apiResource('profile', ProfileController::class);
+        // Route::apiResource('profile', ProfileController::class);
+        Route::get('/profile', [ProfileController::class, 'index']);
+        Route::post('/profile', [ProfileController::class, 'store']);
+        Route::put('/profile', [ProfileController::class, 'update']);
+        Route::delete('/profile', [ProfileController::class, 'destroy']);
 
         Route::get('user/{id}/profile', [UserController::class, 'getProfile']);
         Route::get('user/{id}/tasks', [UserController::class, 'getUserTasks']);
