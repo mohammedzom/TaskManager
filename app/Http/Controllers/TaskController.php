@@ -6,7 +6,6 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Http\Resources\UserResource;
-use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,7 +45,7 @@ class TaskController extends Controller
             return response()->json(['message' => 'Invalid Sort Direction'], 422);
         }
 
-        return new TaskResource($tasks, 200);
+        return TaskResource::collection($tasks, 200);
     }
 
     public function store(StoreTaskRequest $request)
@@ -97,9 +96,11 @@ class TaskController extends Controller
 
     public function getCategoriesTasks($category_id)
     {
-        $tasks = Category::findOrFail($category_id)->tasks()->where('user_id', Auth::id())->get();
+        $tasks = Auth::user()->tasks()->with('categories')->get();
 
-        return new TaskResource($tasks);
+        // return TaskResource::collection($tasks);
+
+        return TaskResource::collection($tasks);
 
     }
 
