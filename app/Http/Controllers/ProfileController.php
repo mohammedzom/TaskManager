@@ -4,37 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
-use App\Models\Profile;
+use App\Http\Resources\ProfileResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $profile = Auth::user()->profile;
 
-        return response()->json($profile, 200);
+        return new ProfileResource($profile, 200);
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreProfileRequest $request): JsonResponse
     {
-        $user_id = Auth::user()->id;
-        $existingProfile = Profile::where('user_id', $user_id)->first();
-        if ($existingProfile) {
-            // throw
-            // return response()->json([
-            //     'message' => 'User already has a profile. Use update instead.',
-            // ], 409); // 409 Conflict
-        }
         $validated = $request->validated();
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('images', 'public');
@@ -44,13 +30,10 @@ class ProfileController extends Controller
 
         return response()->json([
             'message' => 'Profile created successfully',
-            'profile' => $profile,
+            'profile' => new ProfileResource($profile),
         ], 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateProfileRequest $request)
     {
         $profile = Auth::user()->profile;
@@ -60,27 +43,30 @@ class ProfileController extends Controller
         $validated = $request->validated();
         if ($request->hasFile('image')) {
             if ($profile->image) {
-                Storage::disk('public')->delete($profile->image);
+                if (Storage::disk('public')->exists($profile->image)) {
+                    Storage::disk('public')->delete($profile->image);
+                }
             }
             $path = $request->file('image')->store('images', 'public');
             $validated['image'] = $path;
         }
         $profile->update($validated);
 
-        return response()->json($profile, 200);
+        return new ProfileResource($profile);
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy()
     {
         $profile = Auth::user()->profile;
         if (! $profile) {
             return response()->json(['message' => 'Profile not found'], 404);
         }
-        Storage::disk('public')->delete($profile->image);
+        if ($profile->image) {
+            if (Storage::disk('public')->exists($profile->image)) {
+                Storage::disk('public')->delete($profile->image);
+            }
+        }
         $profile->delete();
 
         return response()->json(null, 204);

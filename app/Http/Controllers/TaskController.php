@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Resources\TaskResource;
+use App\Http\Resources\UserResource;
 use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
 
-        return response()->json($tasks, 200);
+        return TaskResource::collection($tasks, 200);
 
     }
 
@@ -24,14 +26,14 @@ class TaskController extends Controller
     {
         $tasks = Auth::user()->tasks;
 
-        return response()->json($tasks, 200);
+        return TaskResource::collection($tasks, 200);
     }
 
     public function getTaskOrderByPriority()
     {
         $tasks = Auth::user()->tasks()->orderByRaw('FIELD(priority, "high", "medium", "low")')->get();
 
-        return response()->json($tasks, 200);
+        return TaskResource::collection($tasks, 200);
     }
 
     public function getTaskOrderByPriorityByUser($sort_direction)
@@ -44,14 +46,14 @@ class TaskController extends Controller
             return response()->json(['message' => 'Invalid Sort Direction'], 422);
         }
 
-        return response()->json($tasks, 200);
+        return new TaskResource($tasks, 200);
     }
 
     public function store(StoreTaskRequest $request)
     {
         $task = Auth::user()->tasks()->create($request->validated());
 
-        return response()->json($task, 201);
+        return new TaskResource($task);
     }
 
     public function update(UpdateTaskRequest $request, $id)
@@ -60,14 +62,14 @@ class TaskController extends Controller
         $task = Auth::user()->tasks()->findOrFail($id);
         $task->update($request->validated());
 
-        return response()->json($task, 200);
+        return new TaskResource($task, 200);
     }
 
     public function show($id)
     {
         $task = Auth::user()->tasks()->findOrFail($id);
 
-        return response()->json($task, 200);
+        return new TaskResource($task, 200);
     }
 
     public function destroy($id)
@@ -81,7 +83,7 @@ class TaskController extends Controller
     {
         $user = Auth::user()->tasks()->findOrFail($id)->user;
 
-        return response()->json($user, 200);
+        return new UserResource($user);
     }
 
     public function addCategoriesToTasks(Request $request, $taskId)
@@ -97,7 +99,7 @@ class TaskController extends Controller
     {
         $tasks = Category::findOrFail($category_id)->tasks()->where('user_id', Auth::id())->get();
 
-        return response()->json($tasks, 200);
+        return new TaskResource($tasks);
 
     }
 

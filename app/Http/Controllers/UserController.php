@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\ProfileResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|max:32|confirmed',
-        ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -25,16 +22,12 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User Registered Successfully',
-            'user' => $user,
+            'user' => new UserResource($user),
         ], 201);
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
 
         if (! Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
@@ -46,7 +39,7 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'Login Successfully',
-                'user' => $user,
+                'user' => new UserResource($user),
                 'token' => $token,
             ], 200);
         }
@@ -67,7 +60,7 @@ class UserController extends Controller
     {
         $profile = User::findOrFail($id)->profile;
 
-        return response()->json($profile, 200);
+        return new ProfileResource($profile, 200);
     }
 
     public function getUserTasks($id)
