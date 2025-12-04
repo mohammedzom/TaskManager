@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class TaskController extends Controller
 {
@@ -86,7 +87,8 @@ class TaskController extends Controller
     public function addCategoriesToTasks(Request $request, $taskId)
     {
         $task = Auth::user()->tasks()->findOrFail($taskId);
-        $task->categories()->syncWithoutDetaching($request->category_id);
+
+        $task->categories()->attach($request->category_id);
 
         return response()->json('Category attached successfully', 200);
     }
@@ -110,7 +112,7 @@ class TaskController extends Controller
     public function addToFavorites($taskId)
     {
         if (Task::findOrFail($taskId)->user_id != Auth::user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            throw new AccessDeniedHttpException;
         }
         Auth::user()->favoriteTasks()->syncWithoutDetaching($taskId);
 
@@ -120,7 +122,7 @@ class TaskController extends Controller
     public function removeFromFavorites($taskId)
     {
         if (Task::findOrFail($taskId)->user_id != Auth::user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            throw new AccessDeniedHttpException;
         }
         Auth::user()->favoriteTasks()->detach($taskId);
 

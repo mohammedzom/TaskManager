@@ -14,7 +14,7 @@ class UpdateTaskRequest extends BaseTaskRequest
         return [
             'title' => 'sometimes|required|string|max:50',
             'description' => 'sometimes|nullable|string',
-            'priority' => 'sometimes|required|integer|min:1|max:5',
+            'priority' => 'sometimes|in:high,medium,low',
 
         ];
     }

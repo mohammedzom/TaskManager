@@ -17,21 +17,11 @@ class BaseTaskRequest extends FormRequest
     public function messages()
     {
         return [
-            // صيغة الكتابة: 'اسم_الحقل.اسم_القاعدة' => 'الرسالة'
-
-            // رسائل خاصة بحقل العنوان
-            'title.required' => 'يرجى إدخال عنوان للمهمة.',
-            'title.string' => 'يجب أن يكون العنوان نصاً.',
-            'title.max' => 'العنوان طويل جداً، يجب ألا يتجاوز 50 حرفاً.',
-
-            // رسائل خاصة بحقل الوصف
-            'description.string' => 'الوصف يجب أن يكون نصاً.',
-
-            // رسائل خاصة بحقل الأولوية
-            'priority.required' => 'تحديد الأولوية أمر ضروري.',
-            'priority.integer' => 'الأولوية يجب أن تكون رقماً صحيحاً.',
-            'priority.min' => 'أقل قيمة للأولوية هي 1.',
-            'priority.max' => 'أعلى قيمة للأولوية هي 5.',
+            'title.required' => 'The task title is required.',
+            'title.string' => 'The task title must be a valid string.',
+            'title.max' => 'The task title must not exceed 50 characters.',
+            'priority.required' => 'Please select a priority level.',
+            'priority.in' => 'The priority must be one of: high, medium, or low.',
         ];
     }
 }

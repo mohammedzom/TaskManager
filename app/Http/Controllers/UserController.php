@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,12 +16,10 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|max:32|confirmed',
-            'role' => 'nullable|string',
         ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role ?? 'user',
             'password' => Hash::make($request->password),
         ]);
 
@@ -53,13 +52,15 @@ class UserController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        $request->user()->currentAccessToken()->delete;
+        Auth::user()->currentAccessToken()->delete();
+        // for delete all tokens
+        // Auth::user()->tokens->each(function ($token, $key) {
+        //     $token->delete();
+        // });
 
-        return response()->json([
-            'message' => 'Logout Successfully',
-        ]);
+        return response()->json('Successfully logged out');
     }
 
     public function getProfile($id)
@@ -74,5 +75,20 @@ class UserController extends Controller
         $tasks = User::findOrFail($id)->tasks;
 
         return response()->json($tasks, 200);
+    }
+
+    public function GetUser()
+    {
+        $user_id = Auth::user()->id;
+        $UserData = User::with('profile')->findOrFail($user_id);
+
+        return new UserResource($UserData);
+    }
+
+    public function GetUsers()
+    {
+        $UserData = User::with('profile')->get();
+
+        return UserResource::collection($UserData);
     }
 }

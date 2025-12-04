@@ -30,9 +30,10 @@ class ProfileController extends Controller
         $user_id = Auth::user()->id;
         $existingProfile = Profile::where('user_id', $user_id)->first();
         if ($existingProfile) {
-            return response()->json([
-                'message' => 'User already has a profile. Use update instead.',
-            ], 409); // 409 Conflict
+            // throw
+            // return response()->json([
+            //     'message' => 'User already has a profile. Use update instead.',
+            // ], 409); // 409 Conflict
         }
         $validated = $request->validated();
         if ($request->hasFile('image')) {
@@ -58,6 +59,9 @@ class ProfileController extends Controller
         }
         $validated = $request->validated();
         if ($request->hasFile('image')) {
+            if ($profile->image) {
+                Storage::disk('public')->delete($profile->image);
+            }
             $path = $request->file('image')->store('images', 'public');
             $validated['image'] = $path;
         }
