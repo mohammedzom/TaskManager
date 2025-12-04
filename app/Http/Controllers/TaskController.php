@@ -52,7 +52,7 @@ class TaskController extends Controller
     {
         $task = Auth::user()->tasks()->create($request->validated());
 
-        return new TaskResource($task);
+        return TaskResource::collection($task);
     }
 
     public function update(UpdateTaskRequest $request, $id)
@@ -97,8 +97,6 @@ class TaskController extends Controller
     public function getCategoriesTasks($category_id)
     {
         $tasks = Auth::user()->tasks()->with('categories')->get();
-
-        // return TaskResource::collection($tasks);
 
         return TaskResource::collection($tasks);
 

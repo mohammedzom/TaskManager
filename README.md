@@ -1,59 +1,129 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# نظام إدارة المهام (Task Manager API)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+نظام متكامل لإدارة المهام مبني باستخدام إطار العمل **Laravel**. يوفر هذا المشروع واجهة برمجة تطبيقات (API) قوية تسمح للمستخدمين بإدارة مهامهم اليومية، تنظيمها ضمن فئات، تحديد أولوياتها، وإضافتها للمفضلة، مع نظام مصادقة آمن.
 
-## About Laravel
+## 🌟 المميزات الرئيسية
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   **نظام مصادقة متكامل (Authentication):** تسجيل حساب جديد، تسجيل دخول، وتسجيل خروج آمن باستخدام `Laravel Sanctum`.
+-   **إدارة المهام (CRUD):** إمكانية إنشاء، قراءة، تعديل، وحذف المهام.
+-   **نظام الأولويات:** دعم ترتيب المهام بناءً على الأولوية (High, Medium, Low) مع إمكانية الفرز تصاعدياً أو تنازلياً.
+-   **المفضلة (Favorites):** إمكانية إضافة المهام إلى قائمة المفضلة والوصول إليها بسرعة.
+-   **التصنيفات (Categories):** ربط المهام بتصنيفات متعددة لتنظيم أفضل، وعرض المهام حسب التصنيف.
+-   **إدارة الملف الشخصي (Profiles):** إدارة بيانات الملف الشخصي للمستخدم.
+-   **صلاحيات المستخدمين:** حماية بعض المسارات (مثل عرض جميع المهام) باستخدام Middleware خاص (`CheckUser`).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ التقنيات المستخدمة
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   **PHP:** ^8.2
+-   **Framework:** Laravel 12.x
+-   **Authentication:** Laravel Sanctum
+-   **Database:** MySQL (مفترض بناءً على الإعدادات الافتراضية)
 
-## Learning Laravel
+## 🚀 طريقة التنصيب والتشغيل
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+اتبع الخطوات التالية لتشغيل المشروع على جهازك المحلي:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1.  **استنساخ المستودع (Clone):**
 
-## Laravel Sponsors
+    ```bash
+    git clone <repository-url>
+    cd TaskManager
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2.  **تثبيت الحزم (Dependencies):**
 
-### Premium Partners
+    ```bash
+    composer install
+    npm install
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+3.  **إعداد ملف البيئة (.env):**
+    قم بنسخ ملف المثال وتعديل إعدادات قاعدة البيانات:
 
-## Contributing
+    ```bash
+    cp .env.example .env
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    _تأكد من إنشاء قاعدة بيانات جديدة وربطها في ملف `.env`._
 
-## Code of Conduct
+4.  **توليد مفتاح التطبيق:**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    ```bash
+    php artisan key:generate
+    ```
 
-## Security Vulnerabilities
+5.  **تجهيز قاعدة البيانات (Migrations):**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```bash
+    php artisan migrate
+    ```
 
-## License
+    _(يمكنك استخدام `php artisan migrate --seed` إذا كان هناك بيانات أولية)._
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+6.  **تشغيل السيرفر:**
+    ```bash
+    php artisan serve
+    ```
+    سيعمل المشروع عادةً على الرابط: `http://localhost:8000`.
+
+## 📚 توثيق نقاط الوصول (API Endpoints)
+
+جميع الطلبات يجب أن توجه إلى `http://localhost:8000/api`.
+يجب إرفاق `Authorization: Bearer <token>` في ترويسة الطلبات (Headers) للمسارات المحمية.
+
+### 🔐 المصادقة (Authentication)
+
+| الطريقة | المسار      | الوصف                           |
+| :------ | :---------- | :------------------------------ |
+| `POST`  | `/register` | تسجيل مستخدم جديد               |
+| `POST`  | `/login`    | تسجيل الدخول والحصول على التوكن |
+| `POST`  | `/logout`   | تسجيل الخروج (يتطلب توكن)       |
+
+### 👤 المستخدم والملف الشخصي (User & Profile)
+
+| الطريقة  | المسار             | الوصف                          |
+| :------- | :----------------- | :----------------------------- |
+| `GET`    | `/user`            | عرض بيانات المستخدم الحالي     |
+| `GET`    | `/users`           | عرض جميع المستخدمين (للمشرفين) |
+| `GET`    | `/profile`         | عرض الملف الشخصي للمستخدم      |
+| `POST`   | `/profile`         | إنشاء ملف شخصي                 |
+| `PUT`    | `/profile`         | تحديث الملف الشخصي             |
+| `DELETE` | `/profile`         | حذف الملف الشخصي               |
+| `GET`    | `/user/{id}/tasks` | عرض مهام مستخدم معين           |
+
+### ✅ المهام (Tasks)
+
+| الطريقة  | المسار        | الوصف                                |
+| :------- | :------------ | :----------------------------------- |
+| `GET`    | `/tasks`      | عرض جميع مهام المستخدم الحالي        |
+| `POST`   | `/tasks`      | إنشاء مهمة جديدة                     |
+| `GET`    | `/tasks/{id}` | عرض تفاصيل مهمة محددة                |
+| `PUT`    | `/tasks/{id}` | تحديث مهمة                           |
+| `DELETE` | `/tasks/{id}` | حذف مهمة                             |
+| `GET`    | `/tasks/all`  | عرض كافة المهام في النظام (للمشرفين) |
+
+### ⚡ ميزات إضافية للمهام (Filters & Features)
+
+| الطريقة  | المسار                  | الوصف                          |
+| :------- | :---------------------- | :----------------------------- |
+| `GET`    | `/tasks/ordered`        | عرض المهام مرتبة حسب الأولوية  |
+| `GET`    | `/tasks/ordered/{sort}` | عرض المهام مرتبة (ASC أو DESC) |
+| `GET`    | `/tasks/favorite`       | عرض المهام المفضلة فقط         |
+| `POST`   | `/tasks/{id}/favorite`  | إضافة مهمة للمفضلة             |
+| `DELETE` | `/tasks/{id}/favorite`  | إزالة مهمة من المفضلة          |
+
+### 📂 التصنيفات (Categories)
+
+| الطريقة | المسار                   | الوصف                               |
+| :------ | :----------------------- | :---------------------------------- |
+| `POST`  | `/tasks/{id}/categories` | ربط تصنيف بمهمة محددة               |
+| `GET`   | `/tasks/{id}/categories` | عرض تصنيفات مهمة معينة              |
+| `GET`   | `/categories/{id}/tasks` | عرض جميع المهام التابعة لتصنيف معين |
+
+## 🧪 الاختبار (Testing)
+
+لتشغيل الاختبارات الموجودة في المشروع:
+
+```bash
+php artisan test
+```
