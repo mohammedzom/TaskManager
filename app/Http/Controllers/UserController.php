@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Resources\ProfileResource;
+use App\Http\Resources\TaskResource;
 use App\Http\Resources\UserResource;
 use App\Mail\WelcomeMail;
 use App\Models\User;
@@ -60,18 +60,11 @@ class UserController extends Controller
         return response()->json('Successfully logged out');
     }
 
-    public function getProfile($id)
-    {
-        $profile = User::findOrFail($id)->profile;
-
-        return new ProfileResource($profile, 200);
-    }
-
     public function getUserTasks($id)
     {
         $tasks = User::findOrFail($id)->tasks;
 
-        return response()->json($tasks, 200);
+        return TaskResource::collection($tasks);
     }
 
     public function GetUser()

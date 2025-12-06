@@ -3,38 +3,57 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Support\Facades\App; // لاستخدام App::hasDebugModeEnabled() أو config
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ApiException extends Exception
 {
-    protected $code;
+    protected $httpCode;
 
     protected $details;
 
-    public function __construct($message, $details = null, $code = 400)
+    protected $internalCode;
+
+    public function __construct($message, $details = null, $httpCode = 400, $internalCode = null)
     {
         parent::__construct($message);
-        $this->code = $code;
+
         $this->details = $details;
+        $this->httpCode = $httpCode;
+        $this->internalCode = $internalCode;
     }
 
-    public function render($request)
+    public function render(Request $request): JsonResponse
     {
         $response = [
             'status' => false,
             'message' => $this->getMessage(),
         ];
 
-        if (config('app.debug')) {
-            if ($this->details) {
-                $response['details'] = $this->details;
-            }
-        } else {
-            if (is_array($this->details) && ! isset($this->details['errorInfo'])) {
-                $response['details'] = $this->details;
-            }
+        if ($this->internalCode) {
+            $response['code'] = $this->internalCode;
         }
 
-        return response()->json($response, $this->code);
+        if ($this->shouldShowDetails()) {
+            $response['details'] = $this->details;
+        }
+
+        return response()->json($response, $this->httpCode);
+    }
+
+    private function shouldShowDetails(): bool
+    {
+        if (empty($this->details)) {
+            return false;
+        }
+        if (config('app.debug')) {
+            return true;
+        }
+
+        if (is_array($this->details) && ! isset($this->details['errorInfo'])) {
+            return true;
+        }
+
+        return false;
     }
 }

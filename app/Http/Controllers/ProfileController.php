@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,6 +15,9 @@ class ProfileController extends Controller
     public function index()
     {
         $profile = Auth::user()->profile;
+        if (! $profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
 
         return new ProfileResource($profile, 200);
 
@@ -26,12 +30,18 @@ class ProfileController extends Controller
             $path = $request->file('image')->store('images', 'public');
             $validated['image'] = $path;
         }
-        $profile = Auth::user()->profile()->create($validated);
+        try {
+            $profile = Auth::user()->profile()->create($validated);
 
-        return response()->json([
-            'message' => 'Profile created successfully',
-            'profile' => new ProfileResource($profile),
-        ], 201);
+            return response()->json([
+                'message' => 'Profile created successfully',
+                'profile' => new ProfileResource($profile),
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Profile is already exists',
+            ], 400);
+        }
     }
 
     public function update(UpdateProfileRequest $request)
